@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <script>
+    /**  服务端有一个根据用户id 查询用户信息的接口，支持批量调用，该接口的输入输出如下：
+    当传入 参数为 id 时，返回用户信息 info
+    当传入参数为 [id1, id2, id3] 时，返回用户信息为 [info1, info2, info3]；
+    
+    现在需要设计一个函数 getUserInfoById，该函数提供给页面上的各个模块查询用户信息使用，要求如下：
+    
+    1、10ms内，如果 getUserInfoById被多次调用，需要合并请求，走批量请求，入参格式为{ids:[id1, id2, id3]} ,否则 入参为{id:id} 
+    2、能正确分发回传接口结果
+    模块A： getUserInfoById(id1).then(info1 => console.log(info1));
+    模块B： getUserInfoById(id2).then(info2 => console.log(info2));
+    模块C： getUserInfoById(id3).then(info3 => console.log(info3));
+    
+    已知对服务端的请求已封装成 getUserInfo 方法，用法如下：
+    
+    getUserInfo([id1, id2, id3]).then(
+        [info1, info2, info3] => {
+            console.log(info1, ifno2, info3);
+        }
+    )
+    
+    请实现 getUserInfoById 方法；
+    
+    请提供可跑起来的函数demo和清楚的注释说明 **/
+    var ids = []
+    var timer
+    var res = []
+    function getUserInfo(params) {
+      return params
+    }
+    async function getUserInfoById(id) {
+      if (timer) {
+        ids.push(id)
+      } else {
+        timer = setTimeout(async () => {
+          res = await getUserInfo(ids)
+          console.log(res);
+          // cb(res)
+          clearTimeout(timer)
+          ids = []
+          res = []
+        }, 10)
+      }
+      console.log(ids);
+    }
+    getUserInfoById(1).then(info1 => console.log(info1));
+  </script>
+</body>
+
+</html>
